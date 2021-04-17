@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MovieRepository: JpaRepository<Movie, String> {
+
+    fun findByTitleIgnoreCaseContaining(title: String): List<Movie>?
 }

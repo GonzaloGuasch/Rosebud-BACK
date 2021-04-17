@@ -16,5 +16,6 @@ class MovieController(private var movieService: MovieService) {
     @PostMapping("/create")
     fun createMovie(@RequestBody movieToSave: Movie): Movie = this.movieService.save(movieToSave)
 
-
+    @GetMapping("searchByTitle/{movieTitle}")
+    fun getMovieByTitle(@PathVariable movieTitle: String): List<Movie>? = this.movieService.getMovieByTitle(movieTitle)
 }

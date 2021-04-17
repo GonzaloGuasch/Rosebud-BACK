@@ -11,4 +11,6 @@ class MovieService(private var movieRepository: MovieRepository) {
 
     fun save(movieToSave: Movie): Movie = this.movieRepository.save(movieToSave)
 
+    fun getMovieByTitle(movieTitle: String): List<Movie>? = this.movieRepository.findByTitleIgnoreCaseContaining(movieTitle)
+
 }
