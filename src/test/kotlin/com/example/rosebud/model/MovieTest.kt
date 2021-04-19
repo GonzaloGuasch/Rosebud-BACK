@@ -31,4 +31,13 @@ class MovieTest {
         movie.rate(5)
         assertEquals(5, movie.raiting)
     }
+
+    @Test
+    fun test_004_UsersCanLeaveReviewsInMovies() {
+        val movie = Movie("Alien: the eight passanger", "Ridly Scott")
+        val review = Review("user_test", "The best alien movie ever!")
+        movie.addReview(review)
+
+        assertEquals(1, movie.reviews.size)
+    }
 }

@@ -2,7 +2,7 @@ package com.example.rosebud.controller
 
 import com.example.rosebud.model.Movie
 import com.example.rosebud.model.wrapper.MovieRateWrapper
-import com.example.rosebud.repository.MovieRepository
+import com.example.rosebud.model.wrapper.ReviewWrapper
 import com.example.rosebud.service.MovieService
 import org.springframework.web.bind.annotation.*
 
@@ -22,4 +22,7 @@ class MovieController(private var movieService: MovieService) {
 
     @PostMapping("/rate")
     fun rateMovie(movieRateWrapper: MovieRateWrapper): Movie = this.movieService.rateMovie(movieRateWrapper)
+
+    @PostMapping("/leaveReview")
+    fun leaveReview(@RequestBody reviewWrapper: ReviewWrapper): Movie = this.movieService.leaveReview(reviewWrapper)
 }

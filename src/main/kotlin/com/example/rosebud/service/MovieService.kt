@@ -1,7 +1,9 @@
 package com.example.rosebud.service
 
 import com.example.rosebud.model.Movie
+import com.example.rosebud.model.Review
 import com.example.rosebud.model.wrapper.MovieRateWrapper
+import com.example.rosebud.model.wrapper.ReviewWrapper
 import com.example.rosebud.repository.MovieRepository
 import org.springframework.stereotype.Service
 
@@ -17,9 +19,16 @@ class MovieService(private var movieRepository: MovieRepository) {
     fun rateMovie(movieRateWrapper: MovieRateWrapper): Movie {
         val movieToRate: Movie = this.movieRepository.findById(movieRateWrapper.movieTitle).get()
         movieToRate.rate(movieRateWrapper.rate)
-        this.movieRepository.save(movieToRate)
 
-        return movieToRate
+        return this.movieRepository.save(movieToRate)
+    }
+
+    fun leaveReview(reviewWrapper: ReviewWrapper): Movie {
+        val movieToReview = this.movieRepository.findById(reviewWrapper.movieTitle).get()
+        val newReview = Review(reviewWrapper.username, reviewWrapper.review)
+        movieToReview.addReview(newReview)
+
+        return this.movieRepository.save(movieToReview)
     }
 
 }
