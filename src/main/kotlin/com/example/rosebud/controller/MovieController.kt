@@ -22,9 +22,8 @@ class MovieController(private var movieService: MovieService) {
     @PostMapping("/create")
     fun createMovie(@RequestBody movieToSave: Movie): Movie = this.movieService.save(movieToSave)
 
-    //todo ver que onda este requestbody
     @PostMapping("/rate")
-    fun rateMovie(@RequestBody movieRateWrapper: MovieRateWrapper): Movie = this.movieService.rateMovie(movieRateWrapper)
+    fun rateMovie(movieRateWrapper: MovieRateWrapper): Movie = this.movieService.rateMovie(movieRateWrapper)
 
     @PostMapping("/leaveReview")
     fun leaveReview(@RequestBody reviewWrapper: ReviewWrapper): Movie = this.movieService.leaveReview(reviewWrapper)
