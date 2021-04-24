@@ -31,4 +31,6 @@ class MovieService(private var movieRepository: MovieRepository) {
         return this.movieRepository.save(movieToReview)
     }
 
+    fun getByTitle(movieTitle: String): Movie? = this.movieRepository.findById(movieTitle).get()
+
 }
