@@ -26,5 +26,5 @@ class MovieController(private var movieService: MovieService) {
     fun rateMovie(movieRateWrapper: MovieRateWrapper): Movie = this.movieService.rateMovie(movieRateWrapper)
 
     @PostMapping("/leaveReview")
-    fun leaveReview(@RequestBody reviewWrapper: ReviewWrapper): Movie = this.movieService.leaveReview(reviewWrapper)
+    fun leaveReview(reviewWrapper: ReviewWrapper): Movie = this.movieService.leaveReview(reviewWrapper)
 }
