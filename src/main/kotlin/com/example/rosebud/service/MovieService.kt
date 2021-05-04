@@ -11,11 +11,15 @@ import org.springframework.stereotype.Service
 
 @Service
 class MovieService(private val movieRepository: MovieRepository,
-                   private val userService: UserService) {
+                   private val userService: UserService,
+                   private val durationService: DurationService) {
 
     fun getAllMovies(): List<Movie> = this.movieRepository.findAll()
 
-    fun save(movieToSave: Movie): Movie = this.movieRepository.save(movieToSave)
+    fun save(movieToSave: Movie): Movie {
+        this.durationService.save(movieToSave.duration)
+        return this.movieRepository.save(movieToSave)
+    }
 
     fun getMovieByTitle(movieTitle: String): List<Movie>? = this.movieRepository.findByTitleIgnoreCaseContaining(movieTitle)
 

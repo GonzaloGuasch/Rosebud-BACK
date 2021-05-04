@@ -22,6 +22,7 @@ class MovieController(private var movieService: MovieService) {
 
     @GetMapping("/statsForUser/{username}")
     fun getStatsForUser(@PathVariable username: String) = this.movieService.getStatsForUser(username)
+
     @PostMapping("/create")
     fun createMovie(@RequestBody movieToSave: Movie): Movie = this.movieService.save(movieToSave)
 

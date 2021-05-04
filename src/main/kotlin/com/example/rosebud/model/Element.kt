@@ -5,6 +5,8 @@ import javax.persistence.*
 @MappedSuperclass
 open class Element(@Id
               val title: String,
+              @OneToOne
+              val duration: Duration,
               var raiting: Int = 0,
               private var totalRaiting: Int = 0,
               private var timesRated: Int = 0,

@@ -8,7 +8,7 @@ class MovieTest {
 
     @Test
     fun test_001_aMovieHasCeroStartUntilAUserRatesIt() {
-        val movie = Movie("The terminator", "James cameron")
+        val movie = Movie("The terminator", "James cameron", Duration(2, 30))
         assertEquals(0, movie.raiting)
         movie.rate(3)
         assertEquals(3, movie.raiting)
@@ -16,7 +16,7 @@ class MovieTest {
 
     @Test
     fun test_002_IfMoreThanAUserVoteTheSameMovieTheRateIsTheAverage() {
-        val movie = Movie("The terminator", "James cameron")
+        val movie = Movie("The terminator", "James cameron", Duration(2, 30))
         movie.rate(5)
         movie.rate(1)
         assertNotEquals(1, movie.raiting)
@@ -25,7 +25,7 @@ class MovieTest {
 
     @Test
     fun test_003_AMovieraitingCannotBeHigherThanFive() {
-        val movie = Movie("The terminator", "James cameron")
+        val movie = Movie("The terminator", "James cameron", Duration(2, 30))
         movie.rate(5)
         movie.rate(5)
         movie.rate(5)
@@ -34,7 +34,7 @@ class MovieTest {
 
     @Test
     fun test_004_UsersCanLeaveReviewsInMovies() {
-        val movie = Movie("Alien: the eight passanger", "Ridly Scott")
+        val movie = Movie("Alien: the eight passanger", "Ridly Scott", Duration(2, 30))
         val review = Review("user_test", "The best alien movie ever!")
         movie.addReview(review)
 

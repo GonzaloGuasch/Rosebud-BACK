@@ -4,7 +4,8 @@ import javax.persistence.Entity
 
 @Entity(name="movie")
 class Movie(val director: String,
-            title: String): Element(title) {
+            title: String,
+            duration: Duration): Element(title, duration) {
 
 }
 
