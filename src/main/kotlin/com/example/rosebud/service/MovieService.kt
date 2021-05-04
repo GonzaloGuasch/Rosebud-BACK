@@ -44,4 +44,6 @@ class MovieService(private val movieRepository: MovieRepository,
         return true
     }
 
+    fun getStatsForUser(username: String): Any = this.movieRepository.getStatsForUser(username)
+
 }
