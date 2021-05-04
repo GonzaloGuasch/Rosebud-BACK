@@ -5,6 +5,7 @@ import com.example.rosebud.model.Review
 import com.example.rosebud.model.User
 import com.example.rosebud.model.wrapper.MovieRateWrapper
 import com.example.rosebud.model.wrapper.ReviewWrapper
+import com.example.rosebud.model.wrapper.StatsWrapper
 import com.example.rosebud.model.wrapper.WachtedListWrapper
 import com.example.rosebud.repository.MovieRepository
 import org.springframework.stereotype.Service
@@ -48,6 +49,9 @@ class MovieService(private val movieRepository: MovieRepository,
         return true
     }
 
-    fun getStatsForUser(username: String): Any = this.movieRepository.getStatsForUser(username)
+    fun getStatsForUser(username: String): StatsWrapper {
+        return StatsWrapper(this.movieRepository.getStatsForUser(username),
+                            this.movieRepository.getHoursWatchedForUser(username))
+    }
 
 }

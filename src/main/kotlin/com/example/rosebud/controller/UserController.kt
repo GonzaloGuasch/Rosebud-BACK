@@ -13,4 +13,8 @@ class UserController(private val userService: UserService) {
     @PostMapping("/create")
     fun createUser(@RequestBody user: User): User = this.userService.save(user)
 
+    @GetMapping("/info/{username}")
+    fun userInfo(@PathVariable username: String) = this.userService.userInfo(username)
+
+
 }
