@@ -12,4 +12,8 @@ class User(@Id val username: String,
     fun addMovieWachted(movieWatched: Movie) {
         this.moviesWatched.add(movieWatched)
     }
+
+    fun isMovieInList(movieTitle: String): Boolean {
+        return this.moviesWatched.any { aMovie -> aMovie.title == movieTitle }
+    }
 }

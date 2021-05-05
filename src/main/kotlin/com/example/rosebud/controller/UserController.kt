@@ -16,5 +16,6 @@ class UserController(private val userService: UserService) {
     @GetMapping("/info/{username}")
     fun userInfo(@PathVariable username: String) = this.userService.userInfo(username)
 
-
+    @GetMapping("/isMovieInList/{movieTitle}/{username}")
+    fun isMovieInList(@PathVariable movieTitle: String, @PathVariable username: String) = this.userService.isMovieInList(movieTitle, username)
 }

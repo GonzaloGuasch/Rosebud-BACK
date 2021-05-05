@@ -15,4 +15,9 @@ class UserService(private val userRepository: UserRepository) {
      val user = this.userRepository.findById(username).get()
      return user.moviesWatched.size
     }
+
+    fun isMovieInList(movieTitle: String, username: String): Boolean {
+        val username = this.userRepository.findById(username).get()
+        return username.isMovieInList(movieTitle)
+    }
 }
