@@ -44,6 +44,11 @@ class MovieService(private val movieRepository: MovieRepository,
     fun addToWachtedList(wachtedListWrapper: WachtedListWrapper): Boolean {
         val movie: Movie = this.movieRepository.findById(wachtedListWrapper.movieTitle).get()
         val user: User = this.userService.getByUsername(wachtedListWrapper.username)
+        if(user.isMovieInList(movie.title)) {
+          user.moviesWatched.remove(movie)
+          this.userService.save(user)
+          return false
+        }
         user.addMovieWachted(movie)
         this.userService.save(user)
         return true
