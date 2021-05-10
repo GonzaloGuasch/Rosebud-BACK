@@ -19,14 +19,14 @@ import javax.transaction.Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class MovieControllerTest(@Autowired val mockMvc: MockMvc) {
+class MovieControllerTest(@Autowired val mockMvc: MockMvc, @Autowired val objectMapper: ObjectMapper) {
 
     @Test
     fun test001() {
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/movie/"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(jsonPath("$.length()").value("3"))
+                .andExpect(jsonPath("$.length()").value("4"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
     }
 
@@ -62,21 +62,22 @@ class MovieControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun test005_to_generate_the_stats_the_user_need_to_add_to_the_wachted_list_first() {
-        val existingMovie = "Volver al futuro"
+        val existingMovie = "TITLE TEST"
         val existingUser = "usuario"
+        val wachtedListWrapper  = WachtedListWrapper(existingUser, existingMovie)
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/movie/addToWachtedList/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{username:$existingUser, movieTitle:$existingMovie}"))
+                .content(this.objectMapper.writeValueAsString(wachtedListWrapper)))
                 .andDo(MockMvcResultHandlers.print())
-
 
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/movie/statsForUser/$existingUser"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                //.andExpect(jsonPath("$.listOfDirectors.length()").value("0"))
+                .andExpect(jsonPath("$.listOfDirectors[0][0]").value("TEST"))
                 //.andExpect(jsonPath("$.hoursWatched").value("0"))
                 .andDo(MockMvcResultHandlers.print())
+
     }
 }

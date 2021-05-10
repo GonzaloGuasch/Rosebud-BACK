@@ -27,11 +27,11 @@ class MovieController(private var movieService: MovieService) {
     fun createMovie(@RequestBody movieToSave: Movie): Movie = this.movieService.save(movieToSave)
 
     @PostMapping("/rate")
-    fun rateMovie(movieRateWrapper: MovieRateWrapper): Movie = this.movieService.rateMovie(movieRateWrapper)
+    fun rateMovie(@RequestBody movieRateWrapper: MovieRateWrapper): Movie = this.movieService.rateMovie(movieRateWrapper)
 
     @PostMapping("/leaveReview")
-    fun leaveReview(reviewWrapper: ReviewWrapper): Movie = this.movieService.leaveReview(reviewWrapper)
+    fun leaveReview(@RequestBody reviewWrapper: ReviewWrapper): Movie = this.movieService.leaveReview(reviewWrapper)
 
     @PostMapping("/addToWachtedList")
-    fun addToWachtedList(wachtedListWrapper: WachtedListWrapper): Boolean = this.movieService.addToWachtedList(wachtedListWrapper)
+    fun addToWachtedList(@RequestBody wachtedListWrapper: WachtedListWrapper): Boolean = this.movieService.addToWachtedList(wachtedListWrapper)
 }
