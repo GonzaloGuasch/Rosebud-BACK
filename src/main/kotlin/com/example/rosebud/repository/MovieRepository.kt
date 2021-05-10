@@ -28,5 +28,5 @@ interface MovieRepository: JpaRepository<Movie, String> {
                                      "FROM users_movies_watched "
                                     +"WHERE users_movies_watched.users_username = ?1) " +
                  "ORDER BY SUM(duration.hours)", nativeQuery = true)
-    fun getHoursWatchedForUser(username: String): Int
+    fun getHoursWatchedForUser(username: String): Int?
 }

@@ -8,7 +8,11 @@ import com.example.rosebud.model.wrapper.ReviewWrapper
 import com.example.rosebud.model.wrapper.StatsWrapper
 import com.example.rosebud.model.wrapper.WachtedListWrapper
 import com.example.rosebud.repository.MovieRepository
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
+import java.util.*
 
 @Service
 class MovieService(private val movieRepository: MovieRepository,
@@ -25,24 +29,40 @@ class MovieService(private val movieRepository: MovieRepository,
     fun getMovieByTitle(movieTitle: String): List<Movie>? = this.movieRepository.findByTitleIgnoreCaseContaining(movieTitle)
 
     fun rateMovie(movieRateWrapper: MovieRateWrapper): Movie {
-        val movieToRate: Movie = this.movieRepository.findById(movieRateWrapper.movieTitle).get()
+        val movieToRateOptional: Optional<Movie> = this.movieRepository.findById(movieRateWrapper.movieTitle)
+        if(movieToRateOptional.isEmpty) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la pelicula con ese titulo")
+        }
+        val movieToRate = movieToRateOptional.get()
         movieToRate.rate(movieRateWrapper.rate)
-
         return this.movieRepository.save(movieToRate)
     }
 
     fun leaveReview(reviewWrapper: ReviewWrapper): Movie {
-        val movieToReview = this.movieRepository.findById(reviewWrapper.movieTitle).get()
+        val movieToReviewOptional: Optional<Movie> = this.movieRepository.findById(reviewWrapper.movieTitle)
         val newReview = Review(reviewWrapper.username, reviewWrapper.review)
+        if(movieToReviewOptional.isEmpty) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la pelicula con ese titulo")
+        }
+        val movieToReview = movieToReviewOptional.get()
         movieToReview.addReview(newReview)
-
         return this.movieRepository.save(movieToReview)
     }
 
-    fun getByTitle(movieTitle: String): Movie? = this.movieRepository.findById(movieTitle).get()
+    fun getByTitle(movieTitle: String): Movie? {
+      val movieResult = this.movieRepository.findById(movieTitle)
+      if(movieResult.isEmpty){
+          return null
+      }
+      return movieResult.get()
+    }
 
     fun addToWachtedList(wachtedListWrapper: WachtedListWrapper): Boolean {
-        val movie: Movie = this.movieRepository.findById(wachtedListWrapper.movieTitle).get()
+        val optionalMovie:  Optional<Movie> = this.movieRepository.findById(wachtedListWrapper.movieTitle)
+        if(optionalMovie.isEmpty) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la pelicula con ese titulo")
+        }
+        val movie = optionalMovie.get()
         val user: User = this.userService.getByUsername(wachtedListWrapper.username)
         if(user.isMovieInList(movie.title)) {
           user.moviesWatched.remove(movie)
@@ -55,8 +75,11 @@ class MovieService(private val movieRepository: MovieRepository,
     }
 
     fun getStatsForUser(username: String): StatsWrapper {
-        return StatsWrapper(this.movieRepository.getStatsForUser(username),
-                            this.movieRepository.getHoursWatchedForUser(username))
+        if(username.isEmpty()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del usuario no puede ser vacio")
+        }
+        val hoursWatched = this.movieRepository.getHoursWatchedForUser(username) ?: 0
+        return  StatsWrapper(this.movieRepository.getStatsForUser(username), hoursWatched)
     }
 
 }
