@@ -10,6 +10,7 @@ class Review(@NotNull
              var userCreate: String,
              @NotNull
              var review: String,
+             var hasSpoilers: Boolean,
              @Id
              @GeneratedValue
              var id: Int = 0,) {

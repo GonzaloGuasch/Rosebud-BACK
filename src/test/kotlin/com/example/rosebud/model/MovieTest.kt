@@ -35,7 +35,7 @@ class MovieTest {
     @Test
     fun test_004_UsersCanLeaveReviewsInMovies() {
         val movie = Movie("Alien: the eight passanger", "Ridly Scott", Duration(2, 30))
-        val review = Review("user_test", "The best alien movie ever!")
+        val review = Review("user_test", "The best alien movie ever!", false)
         movie.addReview(review)
 
         assertEquals(1, movie.reviews.size)

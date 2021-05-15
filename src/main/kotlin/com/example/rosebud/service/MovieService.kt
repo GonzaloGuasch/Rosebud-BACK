@@ -40,7 +40,7 @@ class MovieService(private val movieRepository: MovieRepository,
 
     fun leaveReview(reviewWrapper: ReviewWrapper): Movie {
         val movieToReviewOptional: Optional<Movie> = this.movieRepository.findById(reviewWrapper.movieTitle)
-        val newReview = Review(reviewWrapper.username, reviewWrapper.review)
+        val newReview = Review(reviewWrapper.username, reviewWrapper.review, reviewWrapper.hasSpoilers)
         if(movieToReviewOptional.isEmpty) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la pelicula con ese titulo")
         }
