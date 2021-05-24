@@ -5,5 +5,6 @@ import javax.persistence.Entity
 @Entity(name="disk")
 class Disk(val band: String,
            title: String,
-           duration: Duration): Element(title, duration) {
+           gender: String,
+           duration: Duration): Element(title, duration, gender) {
 }
