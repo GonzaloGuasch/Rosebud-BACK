@@ -79,7 +79,8 @@ class MovieService(private val movieRepository: MovieRepository,
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del usuario no puede ser vacio")
         }
         val hoursWatched = this.movieRepository.getHoursWatchedForUser(username) ?: 0
-        return  StatsWrapper(this.movieRepository.getStatsForUser(username), hoursWatched)
+        val gendersWatched = this.movieRepository.getGendersOfUser(username)
+        return  StatsWrapper(this.movieRepository.getStatsForUser(username), hoursWatched, gendersWatched)
     }
 
 }
