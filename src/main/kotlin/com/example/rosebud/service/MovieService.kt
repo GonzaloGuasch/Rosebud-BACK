@@ -11,6 +11,7 @@ import com.example.rosebud.repository.MovieRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
@@ -21,9 +22,15 @@ class MovieService(private val movieRepository: MovieRepository,
 
     fun getAllMovies(): List<Movie> = this.movieRepository.findAll()
 
-    fun save(movieToSave: Movie): Movie {
+    fun saveWithoutImage(movieToSave: Movie): Movie {
         this.durationService.save(movieToSave.duration)
         return this.movieRepository.save(movieToSave)
+    }
+
+    fun addImageToMovie(imagen: MultipartFile, movieId: String): Movie {
+        val movie =  this.movieRepository.findById(movieId).get()
+        movie.imagen = imagen.bytes
+        return this.movieRepository.save(movie)
     }
 
     fun getMovieByTitle(movieTitle: String): List<Movie>? = this.movieRepository.findByTitleIgnoreCaseContaining(movieTitle)

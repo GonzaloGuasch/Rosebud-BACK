@@ -6,6 +6,7 @@ import com.example.rosebud.model.wrapper.ReviewWrapper
 import com.example.rosebud.model.wrapper.WachtedListWrapper
 import com.example.rosebud.service.MovieService
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/movie")
@@ -24,7 +25,11 @@ class MovieController(private var movieService: MovieService) {
     fun getStatsForUser(@PathVariable username: String) = this.movieService.getStatsForUser(username)
 
     @PostMapping("/create")
-    fun createMovie(@RequestBody movieToSave: Movie): Movie = this.movieService.save(movieToSave)
+    fun createMovie(@RequestBody movieToSave: Movie): Movie =  this.movieService.saveWithoutImage(movieToSave)
+
+    @PostMapping("/addImage/{movieTitle}")
+    fun addImageToMovie( @RequestParam("movieImage") movieImage: MultipartFile,
+                         @PathVariable movieTitle: String) = this.movieService.addImageToMovie(movieImage, movieTitle)
 
     @PostMapping("/rate")
     fun rateMovie(@RequestBody movieRateWrapper: MovieRateWrapper): Movie = this.movieService.rateMovie(movieRateWrapper)

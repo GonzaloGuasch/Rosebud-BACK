@@ -13,7 +13,7 @@ class ReviewService(private val reviewRepository: ReviewRepository,
         val review: Review = this.reviewRepository.findById(reviewId.toInt()).get()
         val movie: Movie = this.movieService.getMovieByTitle(movieTitle)!!.first()
         movie.reviews.remove(review)
-        this.movieService.save(movie)
+        this.movieService.saveWithoutImage(movie)
         this.reviewRepository.delete(review)
     }
 }

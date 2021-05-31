@@ -6,7 +6,7 @@ import javax.persistence.Entity
 class JobOffer(userAuthor: String,
                description: String,
                title: String,
-               val remuneration: Double,
+               val remuneration: String,
                val location: String,
                val durationInWeeks: Int,
                val linkReference: String) : Offer(userAuthor, description, title) {
