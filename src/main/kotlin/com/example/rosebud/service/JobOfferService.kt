@@ -10,5 +10,6 @@ class JobOfferService(private val jobOfferRepository : JobOfferRepository) {
     fun getAllJobsOffers() = this.jobOfferRepository.findAll()
 
     fun save(jobOffer: JobOffer) = this.jobOfferRepository.save(jobOffer)
+    fun applyFilters(locationFilter: String, remuneracionFilter: String) = this.jobOfferRepository.findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContaining(locationFilter, remuneracionFilter)
 
 }
