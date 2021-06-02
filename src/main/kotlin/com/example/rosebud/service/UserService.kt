@@ -20,4 +20,9 @@ class UserService(private val userRepository: UserRepository) {
         val username = this.userRepository.findById(username).get()
         return username.isMovieInList(movieTitle)
     }
+
+    fun getDatavisitProfile(username: String): Int {
+        val username = this.userRepository.findById(username).get()
+        return username.moviesWatched.size
+    }
 }
