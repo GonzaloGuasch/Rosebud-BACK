@@ -1,20 +1,6 @@
 package com.example.rosebud.service
 
-import com.example.rosebud.model.Movie
-import com.example.rosebud.model.Review
-import com.example.rosebud.model.User
-import com.example.rosebud.model.wrapper.MovieRateWrapper
-import com.example.rosebud.model.wrapper.ReviewWrapper
-import com.example.rosebud.model.wrapper.StatsWrapper
-import com.example.rosebud.model.wrapper.WachtedListWrapper
-import com.example.rosebud.repository.MovieRepository
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.server.ResponseStatusException
-import java.util.*
-
+/*
 @Service
 class MovieService(private val movieRepository: MovieRepository,
                    private val userService: UserService,
@@ -91,3 +77,5 @@ class MovieService(private val movieRepository: MovieRepository,
     }
 
 }
+
+ */

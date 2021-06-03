@@ -1,3 +1,3 @@
 package com.example.rosebud.model.wrapper
 
-data class WachtedListWrapper(val username: String, val movieTitle: String)
+data class WachtedListWrapper(val username: String, val elementTitle: String)

@@ -10,8 +10,6 @@ open class Element(@Id
                    val duration: Duration,
                    val gender: String,
                    var raiting: Int = 0,
-                   @Lob
-                   @Type(type = "org.hibernate.type.ImageType")
                    var imagen: ByteArray = byteArrayOf(),
                    private var totalRaiting: Int = 0,
                    private var timesRated: Int = 0,
