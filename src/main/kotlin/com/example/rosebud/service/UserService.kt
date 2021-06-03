@@ -25,4 +25,18 @@ class UserService(private val userRepository: UserRepository) {
         val username = this.userRepository.findById(username).get()
         return username.moviesWatched.size
     }
+
+    fun userFollowUSer(firstUser: String, secondUser: String): Boolean {
+        val secondUser = this.userRepository.findById(secondUser).get()
+        return secondUser.isFollowedBy(firstUser);
+    }
+
+    fun follow(userToFollo: String, userFollower: String) {
+        val userToFollo = this.userRepository.findById(userToFollo).get()
+        val userFollower = this.userRepository.findById(userFollower).get()
+        userFollower.follow(userToFollo)
+
+        this.userRepository.save(userFollower)
+        this.userRepository.save(userToFollo)
+    }
 }

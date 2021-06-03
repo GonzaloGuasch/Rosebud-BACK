@@ -21,4 +21,10 @@ class UserController(private val userService: UserService) {
 
     @GetMapping("/isMovieInList/{movieTitle}/{username}")
     fun isMovieInList(@PathVariable movieTitle: String, @PathVariable username: String) = this.userService.isMovieInList(movieTitle, username)
+
+    @GetMapping("/sigueA/{firstUser}/{secondUser}")
+    fun userFollowUser(@PathVariable firstUser: String, @PathVariable secondUser: String) = this.userService.userFollowUSer(firstUser, secondUser)
+
+    @PostMapping("seguirA/{userToFollo}/{userFollower}")
+    fun follow(@PathVariable userToFollo: String, @PathVariable userFollower: String) = this.userService.follow(userToFollo, userFollower)
 }
