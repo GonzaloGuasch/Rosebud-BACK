@@ -19,14 +19,15 @@ import javax.transaction.Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class MovieControllerTest(@Autowired val mockMvc: MockMvc, @Autowired val objectMapper: ObjectMapper) {
+class MovieControllerTest(@Autowired val mockMvc: MockMvc,
+                          @Autowired val objectMapper: ObjectMapper) {
 
     @Test
     fun test001() {
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/movie/"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(jsonPath("$.length()").value("4"))
+                .andExpect(jsonPath("$.*").isArray)
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
     }
 
@@ -75,8 +76,8 @@ class MovieControllerTest(@Autowired val mockMvc: MockMvc, @Autowired val object
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/movie/statsForUser/$existingUser"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(jsonPath("$.listOfDirectors[0][0]").value("TEST"))
-                //.andExpect(jsonPath("$.hoursWatched").value("0"))
+                .andExpect(jsonPath("$.listOfDirectors[0][0]").value("James Cameron"))
+                .andExpect(jsonPath("$.hoursWatched").value("2"))
                 .andDo(MockMvcResultHandlers.print())
 
     }

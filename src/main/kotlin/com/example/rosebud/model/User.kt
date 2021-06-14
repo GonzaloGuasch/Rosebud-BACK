@@ -29,4 +29,9 @@ class User(@Id val username: String,
         this.following.add(userToFollo)
         userToFollo.followers.add(this)
     }
+
+    fun unfollow(userToFollo: User) {
+        this.following.remove(userToFollo)
+        userToFollo.followers.remove(this)
+    }
 }
