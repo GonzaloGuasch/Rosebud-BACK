@@ -5,8 +5,10 @@ import com.example.rosebud.utils.QueryConstants
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
+@Transactional
 interface MovieRepository: JpaRepository<Movie, String> {
     fun findByTitleIgnoreCaseContaining(title: String): List<Movie>?
 

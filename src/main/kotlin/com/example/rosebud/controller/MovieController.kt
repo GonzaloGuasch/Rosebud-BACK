@@ -33,7 +33,7 @@ class MovieController(private val elementService: ElementService) {
     fun getStatsForUser(@PathVariable username: String) = this.elementService.movieStatsForUser(username)
 
     @PostMapping("/rate")
-    fun rateMovie(@RequestBody elementRateWrapper: ElementRateWrapper): Element = this.elementService.rateElement(elementRateWrapper, true)
+    fun rateMovie(@RequestBody elementRateWrapper: ElementRateWrapper): Element = this.elementService.rateElement(elementRateWrapper)
 
     @PostMapping("/leaveReview")
     fun leaveReview(@RequestBody reviewWrapper: ReviewWrapper): Element = this.elementService.leaveReviewInElement(reviewWrapper)
