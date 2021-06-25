@@ -35,10 +35,10 @@ class DiskController(private val elementService: ElementService){
     @PostMapping("/leaveReview")
     fun leaveReview(@RequestBody reviewWrapper: ReviewWrapper): Element = this.elementService.leaveReviewInElement(reviewWrapper, true)
 
-    //TODO terminarlos
     @PostMapping("/addToWachtedList")
-    fun addToWachtedList(@RequestBody wachtedListWrapper: WachtedListWrapper): Boolean = this.elementService.addMovieToWatchedList(wachtedListWrapper)
+    fun addToWachtedList(@RequestBody wachtedListWrapper: WachtedListWrapper): Boolean = this.elementService.addElementToWatchedList(wachtedListWrapper, true)
 
+    //TODO terminarlo
     @GetMapping("statsForUser/{username}")
     fun getStatsForUser(@PathVariable username: String) = this.elementService.movieStatsForUser(username)
 }

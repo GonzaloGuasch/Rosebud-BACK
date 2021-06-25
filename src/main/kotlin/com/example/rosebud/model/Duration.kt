@@ -8,4 +8,7 @@ class Duration(var hours: Int,
                var minutes: Int,
                @Id
                @GeneratedValue
-               var id: Int = 0)
+               var id: Int = 0) {
+
+    fun amountOfMinutes() = (this.hours * 60) + this.minutes
+}

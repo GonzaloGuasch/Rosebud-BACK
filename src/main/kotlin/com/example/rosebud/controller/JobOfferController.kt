@@ -1,19 +1,19 @@
 package com.example.rosebud.controller
 
 import com.example.rosebud.model.Offers.JobOffer
-import com.example.rosebud.service.JobOfferService
+import com.example.rosebud.service.implementations.JobOfferServiceImpl
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/jobOffer")
-class JobOfferController(private val jobOfferService: JobOfferService) {
+class JobOfferController(private val jobOfferServiceImpl: JobOfferServiceImpl) {
 
     @GetMapping("/all")
-    fun getAllJobsOffers() = this.jobOfferService.getAllJobsOffers()
+    fun getAllJobsOffers() = this.jobOfferServiceImpl.getAllJobsOffers()
 
     @PostMapping("/create")
-    fun createJobOffer(@RequestBody jobOffer: JobOffer) = this.jobOfferService.save(jobOffer)
+    fun createJobOffer(@RequestBody jobOffer: JobOffer) = this.jobOfferServiceImpl.save(jobOffer)
 
     @GetMapping("/applyfilter/{locationfilter}/{remuneracionfilter}")
-    fun applyFilter(@PathVariable locationfilter: String,@PathVariable remuneracionfilter: String ) = this.jobOfferService.applyFilters(locationfilter, remuneracionfilter)
+    fun applyFilter(@PathVariable locationfilter: String,@PathVariable remuneracionfilter: String ) = this.jobOfferServiceImpl.applyFilters(locationfilter, remuneracionfilter)
 }

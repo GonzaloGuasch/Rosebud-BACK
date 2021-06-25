@@ -8,6 +8,7 @@ import com.example.rosebud.model.wrapper.WachtedListWrapper
 import com.example.rosebud.repository.DiskRepository
 import com.example.rosebud.repository.MovieRepository
 import com.example.rosebud.repository.ReviewRepository
+import com.example.rosebud.service.implementations.DurationServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -16,14 +17,13 @@ import java.util.*
 
 @Service
 class ElementService(private val movieRepository: MovieRepository,
-                     private val durationService: DurationService,
+                     private val durationServiceImpl: DurationServiceImpl,
                      private val reviewRepository: ReviewRepository,
                      private val userService: UserService,
                      private val diskRepository: DiskRepository) {
 
 
     fun getAllMovies(): List<Movie> = this.movieRepository.findAll()
-
 
     fun getElementsMatchWithTitle(title: String, isDiskQuery: Boolean = false): List<Element>? {
         if(isDiskQuery) {
@@ -35,7 +35,7 @@ class ElementService(private val movieRepository: MovieRepository,
     fun getElementByTitle(elementTitle: String, isDiskQuery: Boolean = false): Element? {
         if(isDiskQuery) {
             val diskResult = this.diskRepository.findById(elementTitle)
-            if(diskResult.isEmpty){
+            if(diskResult.isEmpty) {
                 return null
             }
             return diskResult.get()
@@ -59,7 +59,7 @@ class ElementService(private val movieRepository: MovieRepository,
     }
 
     fun saveMovieWithoutPicture(movieToSave: Movie): Movie {
-        this.durationService.save(movieToSave.duration)
+        this.durationServiceImpl.save(movieToSave.duration)
         return this.movieRepository.save(movieToSave)
     }
 
@@ -71,71 +71,86 @@ class ElementService(private val movieRepository: MovieRepository,
 
     fun rateElement(elementRateWrapper: ElementRateWrapper, isDiskQuery: Boolean = false): Element {
         if(isDiskQuery) {
-            val diskToRateOptional: Optional<Disk> = this.diskRepository.findById(elementRateWrapper.elementTitle)
-            if(diskToRateOptional.isEmpty) {
-                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe el disco con ese titulo")
-            }
-            val diskToRate = diskToRateOptional.get()
-            diskToRate.rate(elementRateWrapper.rate)
-            return this.diskRepository.save(diskToRate)
+            return rateDisk(elementRateWrapper)
         }
-        val movieToRateOptional: Optional<Movie> = this.movieRepository.findById(elementRateWrapper.elementTitle)
-        if(movieToRateOptional.isEmpty) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la pelicula con ese titulo")
-        }
-        val movieToRate = movieToRateOptional.get()
-        movieToRate.rate(elementRateWrapper.rate)
-        return this.movieRepository.save(movieToRate)
+        return rateMovie(elementRateWrapper)
     }
 
     fun leaveReviewInElement(reviewWrapper: ReviewWrapper, isDiskQuery: Boolean = false): Element {
         val newReview = Review(reviewWrapper.username, reviewWrapper.review, reviewWrapper.hasSpoilers)
         if(isDiskQuery) {
-            val diskToReviewOptional: Optional<Disk> = this.diskRepository.findById(reviewWrapper.elementTitle)
-            if(diskToReviewOptional.isEmpty) {
-                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe el disco con ese titulo")
-            }
-            val diskToReview = diskToReviewOptional.get()
-            diskToReview.addReview(newReview)
-            this.reviewRepository.save(newReview)
-            return this.diskRepository.save(diskToReview)
+            return leaveReviewToDisk(reviewWrapper, newReview)
         }
-        val movieToReviewOptional: Optional<Movie> = this.movieRepository.findById(reviewWrapper.elementTitle)
-        if(movieToReviewOptional.isEmpty) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la pelicula con ese titulo")
+        return leaveReviewMovvie(reviewWrapper, newReview)
+    }
+
+
+    fun addElementToWatchedList(wachtedListWrapper: WachtedListWrapper, isDiskQuery: Boolean = false): Boolean {
+        val user: User = this.userService.getByUsername(wachtedListWrapper.username)
+        if(isDiskQuery) {
+            val disk = checkEmptydisk(wachtedListWrapper.elementTitle)
+            user.addDiskListen(disk)
+        } else {
+            val movie = checkEmptyMovie(wachtedListWrapper.elementTitle)
+            user.addMovieWachted(movie)
         }
-        val movieToReview = movieToReviewOptional.get()
+        this.userService.save(user)
+
+        return true
+    }
+
+    private fun rateMovie(elementRateWrapper: ElementRateWrapper): Movie {
+        val movieToRate = this.checkEmptyMovie(elementRateWrapper.elementTitle)
+        movieToRate.rate(elementRateWrapper.rate)
+        return this.movieRepository.save(movieToRate)
+    }
+
+    private fun leaveReviewMovvie(reviewWrapper: ReviewWrapper, newReview: Review): Movie {
+        val movieToReview = checkEmptyMovie(reviewWrapper.elementTitle)
         movieToReview.addReview(newReview)
         return this.movieRepository.save(movieToReview)
     }
 
-    fun addMovieToWatchedList(wachtedListWrapper: WachtedListWrapper): Boolean {
-        val optionalMovie:  Optional<Movie> = this.movieRepository.findById(wachtedListWrapper.elementTitle)
-        if(optionalMovie.isEmpty) {
+    private fun checkEmptyMovie(elementTitle: String): Movie {
+        val optionalMovie: Optional<Movie> = this.movieRepository.findById(elementTitle)
+        if (optionalMovie.isEmpty) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la pelicula con ese titulo")
         }
-        val movie = optionalMovie.get()
-        val user: User = this.userService.getByUsername(wachtedListWrapper.username)
-        if(user.isMovieInList(movie.title)) {
-            user.moviesWatched.remove(movie)
-            this.userService.save(user)
-            return false
-        }
-        user.addMovieWachted(movie)
-        this.userService.save(user)
-        return true
+        return optionalMovie.get()
     }
 
-
-
     // DISK SERVICE
-    fun saveDiskWithoutPicture(diskToSave: Disk): Disk = this.diskRepository.save(diskToSave)
-    fun getAllDisks(): List<Disk> = this.diskRepository.findAll()
+    private fun rateDisk(elementRateWrapper: ElementRateWrapper): Disk {
+        val diskToRate = this.checkEmptydisk(elementRateWrapper.elementTitle)
+        diskToRate.rate(elementRateWrapper.rate)
+        return this.diskRepository.save(diskToRate)
+    }
+    private fun leaveReviewToDisk(reviewWrapper: ReviewWrapper, newReview: Review): Disk {
+        val diskToReview: Disk = checkEmptydisk(reviewWrapper.elementTitle)
+        diskToReview.addReview(newReview)
+        this.reviewRepository.save(newReview)
+        return this.diskRepository.save(diskToReview)
+    }
+
+    private fun checkEmptydisk(elementTitle: String): Disk {
+        val diskToReviewOptional: Optional<Disk> = this.diskRepository.findById(elementTitle)
+        if (diskToReviewOptional.isEmpty) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe el disco con ese titulo")
+        }
+        return diskToReviewOptional.get()
+    }
+
+    fun saveDiskWithoutPicture(diskToSave: Disk): Disk {
+        this.durationServiceImpl.save(diskToSave.duration)
+        return this.diskRepository.save(diskToSave)
+    }
 
     fun addImageToDisk(diskImage: MultipartFile, diskTitle: String): Disk {
         val disk =  this.diskRepository.findById(diskTitle).get()
         disk.imagen = diskImage.bytes
         return this.diskRepository.save(disk)
     }
+
+    fun getAllDisks(): List<Disk> = this.diskRepository.findAll()
 
 }

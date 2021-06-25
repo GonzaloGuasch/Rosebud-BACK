@@ -1,11 +1,11 @@
 package com.example.rosebud.model
-
-import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @MappedSuperclass
 open class Element(@Id
                    val title: String,
+                   val year: Int,
+                   val description: String,
                    @OneToOne
                    val duration: Duration,
                    val gender: String,

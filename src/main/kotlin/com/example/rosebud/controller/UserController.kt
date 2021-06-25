@@ -25,7 +25,6 @@ class UserController(private val userService: UserService) {
     @GetMapping("/sigueA/{firstUser}/{secondUser}")
     fun userFollowUser(@PathVariable firstUser: String, @PathVariable secondUser: String) = this.userService.userFollowUSer(firstUser, secondUser)
 
-
     @GetMapping("/seguidores/{username}")
     fun seguidoresDe(@PathVariable username: String) = this.userService.seguidoresDe(username)
 
@@ -35,6 +34,6 @@ class UserController(private val userService: UserService) {
     @PostMapping("seguirA/{userToFollo}/{userFollower}")
     fun follow(@PathVariable userToFollo: String, @PathVariable userFollower: String) = this.userService.follow(userToFollo, userFollower)
 
-    @PostMapping("dejarDeseguirA/{userFollower}/{userToUnfollow}")
+    @PostMapping("dejarDeseguirA/{userToUnfollow}/{userFollower}")
     fun unfollow(@PathVariable userToUnfollow: String, @PathVariable userFollower: String) = this.userService.unfollow(userFollower, userToUnfollow)
 }

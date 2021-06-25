@@ -39,6 +39,6 @@ class MovieController(private val elementService: ElementService) {
     fun leaveReview(@RequestBody reviewWrapper: ReviewWrapper): Element = this.elementService.leaveReviewInElement(reviewWrapper)
 
     @PostMapping("/addToWachtedList")
-    fun addToWachtedList(@RequestBody wachtedListWrapper: WachtedListWrapper): Boolean = this.elementService.addMovieToWatchedList(wachtedListWrapper)
+    fun addToWachtedList(@RequestBody wachtedListWrapper: WachtedListWrapper): Boolean = this.elementService.addElementToWatchedList(wachtedListWrapper)
 }
 

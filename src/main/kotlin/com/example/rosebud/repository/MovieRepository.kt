@@ -10,9 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 @Transactional
 interface MovieRepository: JpaRepository<Movie, String> {
+
     fun findByTitleIgnoreCaseContaining(title: String): List<Movie>?
-
-
 
     @Query(value="SELECT movie.director, COUNT(movie.director)" +
                   QueryConstants.QUERY +
