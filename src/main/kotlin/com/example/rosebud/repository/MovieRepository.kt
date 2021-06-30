@@ -16,13 +16,17 @@ interface MovieRepository: JpaRepository<Movie, String> {
     @Query(value="SELECT movie.director, COUNT(movie.director)" +
                   QueryConstants.QUERY +
                  "GROUP BY movie.director " +
-                 "ORDER BY SUM(duration.hours)", nativeQuery = true)
+                 "ORDER BY SUM(duration.hours) DESC", nativeQuery = true)
     fun getStatsForUser(username: String): List<Any>
 
-    @Query(value="SELECT SUM(duration.hours)" +
-                  QueryConstants.QUERY +
-                 "ORDER BY SUM(duration.hours)", nativeQuery = true)
-    fun getHoursWatchedForUser(username: String): Int?
+    @Query(value="SELECT duration.hours " +
+                  QueryConstants.QUERY, nativeQuery = true)
+    fun getHoursWatchedForUser(username: String): List<Int>
+
+    @Query(value="SELECT duration.minutes " +
+            QueryConstants.QUERY +
+            "GROUP BY duration.minutes", nativeQuery = true)
+    fun getMinutesWatched(username: String): List<Int>
 
 
     @Query(value="SELECT movie.gender " +
