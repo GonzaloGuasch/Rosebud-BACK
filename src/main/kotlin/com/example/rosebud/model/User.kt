@@ -4,17 +4,17 @@ import com.example.rosebud.model.exception.NoFollowerException
 import javax.persistence.*
 
 @Entity(name="users")
-class User(@Id val username: String,
-               val password: String,
-               val email: String,
-           @ManyToMany
-           var followers: MutableSet<User> = mutableSetOf(),
-           @ManyToMany
-           var following: MutableSet<User> = mutableSetOf(),
-           @ManyToMany
-           var moviesWatched: MutableSet<Movie> = mutableSetOf(),
-           @ManyToMany
-           var diskListen: MutableSet<Disk> = mutableSetOf()) {
+open class User(@Id open val username: String,
+                open val password: String,
+                open val email: String,
+                @ManyToMany
+                open var followers: MutableSet<User> = mutableSetOf(),
+                @ManyToMany
+                open var following: MutableSet<User> = mutableSetOf(),
+                @ManyToMany
+                open var moviesWatched: MutableSet<Movie> = mutableSetOf(),
+                @ManyToMany
+                open var diskListen: MutableSet<Disk> = mutableSetOf()) {
 
 
     fun addMovieWachted(movieWatched: Movie) {
@@ -35,6 +35,10 @@ class User(@Id val username: String,
 
     fun isMovieInList(movieTitle: String): Boolean {
         return this.moviesWatched.any { aMovie -> aMovie.title == movieTitle }
+    }
+
+    fun isDiskInList(diskTitle: String): Boolean {
+        return this.diskListen.any { aDisk -> aDisk.title == diskTitle }
     }
 
     fun isFollowedBy(userFollower: String): Boolean {

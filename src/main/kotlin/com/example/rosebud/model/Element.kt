@@ -1,21 +1,21 @@
 package com.example.rosebud.model
+import java.lang.RuntimeException
 import javax.persistence.*
 
 @MappedSuperclass
-open class Element(@Id
-                   val title: String,
-                   val year: Int,
-                   val description: String,
-                   @OneToOne
-                   val duration: Duration,
-                   val gender: String,
-                   var raiting: Int = 0,
-                   @Lob
-                   var imagen: ByteArray = byteArrayOf(),
-                   private var totalRaiting: Int = 0,
-                   private var timesRated: Int = 0,
-                   @OneToMany(cascade=[CascadeType.ALL])
-                   var reviews: MutableSet<Review> = mutableSetOf()) {
+abstract class Element(@Id
+                       open val title: String,
+                       open val year: Int,
+                       open val description: String,
+                       @OneToOne
+                       open val duration: Duration,
+                       open val gender: String,
+                       open var raiting: Int = 0,
+                       open var imagenPath: String = "",
+                       private var totalRaiting: Int = 0,
+                       private var timesRated: Int = 0,
+                       @OneToMany(cascade=[CascadeType.ALL])
+                       open var reviews: MutableSet<Review> = mutableSetOf()) {
 
     fun rate(userRate: Int) {
         this.timesRated += 1
@@ -24,5 +24,15 @@ open class Element(@Id
         this.raiting = minOf(5, newRaiting)
     }
 
-    fun addReview(review: Review) = this.reviews.add(review)
+    open fun addReview(review: Review) = this.reviews.add(review)
+    fun removeReview(review: Review) {
+        if(this.reviews.contains(review)) {
+            this.reviews.remove(review)
+            return
+        }
+        throw RuntimeException("There is no review for this!")
+    }
+
+
+    abstract fun isMovie(): Boolean
 }
