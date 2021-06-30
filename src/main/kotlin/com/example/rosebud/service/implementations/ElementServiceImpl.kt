@@ -1,4 +1,4 @@
-package com.example.rosebud.service
+package com.example.rosebud.service.implementations
 
 import com.example.rosebud.model.*
 import com.example.rosebud.model.wrapper.ElementRateWrapper
@@ -8,31 +8,31 @@ import com.example.rosebud.model.wrapper.WachtedListWrapper
 import com.example.rosebud.repository.DiskRepository
 import com.example.rosebud.repository.MovieRepository
 import com.example.rosebud.repository.ReviewRepository
-import com.example.rosebud.service.implementations.DurationServiceImpl
+import com.example.rosebud.service.interfaces.IElementService
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
+import java.io.File
 import java.util.*
 
 @Service
-class ElementService(private val movieRepository: MovieRepository,
-                     private val durationServiceImpl: DurationServiceImpl,
-                     private val reviewRepository: ReviewRepository,
-                     private val userService: UserService,
-                     private val diskRepository: DiskRepository) {
+class ElementServiceImpl(private val movieRepository: MovieRepository,
+                         private val durationServiceImpl: DurationServiceImpl,
+                         private val reviewRepository: ReviewRepository,
+                         private val userServiceImpl: UserServiceImpl,
+                         private val diskRepository: DiskRepository): IElementService {
 
 
-    fun getAllMovies(): List<Movie> = this.movieRepository.findAll()
-
-    fun getElementsMatchWithTitle(title: String, isDiskQuery: Boolean = false): List<Element>? {
+    override fun getAllMovies(): List<Movie> = this.movieRepository.findAll()
+    override fun getElementsMatchWithTitle(title: String, isDiskQuery: Boolean): List<Element>? {
         if(isDiskQuery) {
             return this.diskRepository.findByTitleIgnoreCaseContaining(title)
         }
         return this.movieRepository.findByTitleIgnoreCaseContaining(title)
     }
 
-    fun getElementByTitle(elementTitle: String, isDiskQuery: Boolean = false): Element? {
+    override fun getElementByTitle(elementTitle: String, isDiskQuery: Boolean): Element? {
         if(isDiskQuery) {
             val diskResult = this.diskRepository.findById(elementTitle)
             if(diskResult.isEmpty) {
@@ -49,34 +49,40 @@ class ElementService(private val movieRepository: MovieRepository,
 
     }
 
-    fun movieStatsForUser(username: String): StatsWrapper {
+    override fun movieStatsForUser(username: String): StatsWrapper {
         if(username.isEmpty()) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del usuario no puede ser vacio")
         }
-        val hoursWatched = this.movieRepository.getHoursWatchedForUser(username) ?: 0
+        val listenMinutesList = this.movieRepository.getMinutesWatched(username).stream().reduce{ elem, sum -> elem + sum }.get()
+        val listenHoursList = this.movieRepository.getHoursWatchedForUser(username).stream().reduce{ elem, sum -> elem + sum }.get()
+        val hours = listenHoursList + (listenMinutesList / 60)
+
         val gendersWatched = this.movieRepository.getGendersOfUser(username)
-        return  StatsWrapper(this.movieRepository.getStatsForUser(username), hoursWatched, gendersWatched)
+        return  StatsWrapper(this.movieRepository.getStatsForUser(username), hours, gendersWatched)
     }
 
-    fun saveMovieWithoutPicture(movieToSave: Movie): Movie {
+    override fun saveMovieWithoutPicture(movieToSave: Movie): Movie {
         this.durationServiceImpl.save(movieToSave.duration)
         return this.movieRepository.save(movieToSave)
     }
 
-    fun addImageToMovie(movieImage: MultipartFile, movieTitle: String): Movie {
-        val movie =  this.movieRepository.findById(movieTitle).get()
-        movie.imagen = movieImage.bytes
-        return this.movieRepository.save(movie)
+    override fun addImageToMovie(movieImage: MultipartFile, movieTitle: String) {
+        try {
+            val file = File("C:\\Users\\Gonzalo\\Desktop\\images_tip\\$movieTitle.jpg")
+            file.writeBytes(movieImage.bytes)
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 
-    fun rateElement(elementRateWrapper: ElementRateWrapper, isDiskQuery: Boolean = false): Element {
+    override fun rateElement(elementRateWrapper: ElementRateWrapper, isDiskQuery: Boolean): Element {
         if(isDiskQuery) {
             return rateDisk(elementRateWrapper)
         }
         return rateMovie(elementRateWrapper)
     }
 
-    fun leaveReviewInElement(reviewWrapper: ReviewWrapper, isDiskQuery: Boolean = false): Element {
+    override fun leaveReviewInElement(reviewWrapper: ReviewWrapper, isDiskQuery: Boolean): Element {
         val newReview = Review(reviewWrapper.username, reviewWrapper.review, reviewWrapper.hasSpoilers)
         if(isDiskQuery) {
             return leaveReviewToDisk(reviewWrapper, newReview)
@@ -85,18 +91,18 @@ class ElementService(private val movieRepository: MovieRepository,
     }
 
 
-    fun addElementToWatchedList(wachtedListWrapper: WachtedListWrapper, isDiskQuery: Boolean = false): Boolean {
-        val user: User = this.userService.getByUsername(wachtedListWrapper.username)
+    override fun addElementToWatchedList(wachtedListWrapper: WachtedListWrapper, isDiskQuery: Boolean): Boolean {
+        val user: User = this.userServiceImpl.getByUsername(wachtedListWrapper.username)
         if(isDiskQuery) {
             val disk = checkEmptydisk(wachtedListWrapper.elementTitle)
             user.addDiskListen(disk)
-        } else {
-            val movie = checkEmptyMovie(wachtedListWrapper.elementTitle)
-            user.addMovieWachted(movie)
+            this.userServiceImpl.save(user)
+            return user.isDiskInList(wachtedListWrapper.elementTitle)
         }
-        this.userService.save(user)
-
-        return true
+        val movie = checkEmptyMovie(wachtedListWrapper.elementTitle)
+        user.addMovieWachted(movie)
+        this.userServiceImpl.save(user)
+        return user.isMovieInList(wachtedListWrapper.elementTitle)
     }
 
     private fun rateMovie(elementRateWrapper: ElementRateWrapper): Movie {
@@ -140,17 +146,26 @@ class ElementService(private val movieRepository: MovieRepository,
         return diskToReviewOptional.get()
     }
 
-    fun saveDiskWithoutPicture(diskToSave: Disk): Disk {
+    override fun saveDiskWithoutPicture(diskToSave: Disk): Disk {
         this.durationServiceImpl.save(diskToSave.duration)
         return this.diskRepository.save(diskToSave)
     }
 
-    fun addImageToDisk(diskImage: MultipartFile, diskTitle: String): Disk {
-        val disk =  this.diskRepository.findById(diskTitle).get()
-        disk.imagen = diskImage.bytes
-        return this.diskRepository.save(disk)
+    override fun addImageToDisk(diskImage: MultipartFile, diskTitle: String): Disk {
+        return this.diskRepository.findById(diskTitle).get()
     }
 
-    fun getAllDisks(): List<Disk> = this.diskRepository.findAll()
+    override fun getAllDisks(): List<Disk> = this.diskRepository.findAll()
+
+    override fun diskStatsForUser(username: String): StatsWrapper {
+        if(username.isEmpty()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del usuario no puede ser vacio")
+        }
+        val listenMinutesList = this.diskRepository.getMinutesListen(username).stream().reduce{elem, sum -> elem + sum }.get()
+        val listenHoursList = this.diskRepository.getHoursListen(username).stream().reduce{elem, sum -> elem + sum }.get()
+        val hours = listenHoursList + (listenMinutesList / 60)
+        val gendersListen = this.diskRepository.getGendersOfUser(username)
+        return  StatsWrapper(this.diskRepository.getStatsForUser(username), hours, gendersListen)
+    }
 
 }
