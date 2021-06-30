@@ -1,5 +1,7 @@
 package com.example.rosebud.model
 
+import com.example.rosebud.model.exception.NoFollowerException
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,10 +11,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 class MovieTest {
     private lateinit var movie: Movie
-
+    private lateinit var review: Review
     @BeforeEach
     fun setUp() {
         movie = Movie("James cameron", "", 1994,"Action", "The terminator", Duration(2, 30))
+        review = Review("user_test", "The best alien movie ever!", false)
     }
 
     @Test
@@ -40,9 +43,20 @@ class MovieTest {
 
     @Test
     fun test_004_UsersCanLeaveReviewsInMovies() {
-        val review = Review("user_test", "The best alien movie ever!", false)
         movie.addReview(review)
 
         assertEquals(1, movie.reviews.size)
+    }
+
+    @Test
+    fun test_005_IfYouTryToRemoveAnNonExistingReviewItThrowsAnError() {
+        assertThrows(RuntimeException::class.java) { movie.removeReview(review) }
+    }
+
+    @Test
+    fun test_006SuccesfullRemovedReview() {
+        movie.addReview(review)
+        movie.removeReview(review)
+        assertEquals(0, movie.reviews.size)
     }
 }
