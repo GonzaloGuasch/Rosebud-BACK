@@ -11,7 +11,8 @@ abstract class Element(@Id
                        open val duration: Duration,
                        open val gender: String,
                        open var raiting: Int = 0,
-                       open var imagenPath: String = "",
+                       @Lob
+                       open var imagen: ByteArray = byteArrayOf(),
                        private var totalRaiting: Int = 0,
                        private var timesRated: Int = 0,
                        @OneToMany(cascade=[CascadeType.ALL])

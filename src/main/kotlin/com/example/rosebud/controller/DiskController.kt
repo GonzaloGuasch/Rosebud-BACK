@@ -29,6 +29,9 @@ class DiskController(private val elementServiceImpl: ElementServiceImpl){
     @GetMapping("/getByTitle/{diskTitle}")
     fun getByTitle(@PathVariable diskTitle: String): Element? = this.elementServiceImpl.getElementByTitle(diskTitle, true)
 
+    @GetMapping("/reviewsOf/{diskTitle}")
+    fun getReviewsOfDisk(@PathVariable diskTitle: String) = this.elementServiceImpl.getReviewsOfElement(diskTitle, true)
+
     @PostMapping("/rate")
     fun rateDisk(@RequestBody elementRateWrapper: ElementRateWrapper): Element = this.elementServiceImpl.rateElement(elementRateWrapper, true)
 

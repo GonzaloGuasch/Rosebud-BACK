@@ -13,8 +13,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
-import java.io.File
 import java.util.*
+
 
 @Service
 class ElementServiceImpl(private val movieRepository: MovieRepository,
@@ -67,12 +67,9 @@ class ElementServiceImpl(private val movieRepository: MovieRepository,
     }
 
     override fun addImageToMovie(movieImage: MultipartFile, movieTitle: String) {
-        try {
-            val file = File("C:\\Users\\Gonzalo\\Desktop\\images_tip\\$movieTitle.jpg")
-            file.writeBytes(movieImage.bytes)
-        } catch (e: Exception){
-            e.printStackTrace()
-        }
+        val movie = this.checkEmptyMovie(movieTitle)
+        movie.imagen = movieImage.bytes
+        this.movieRepository.save(movie)
     }
 
     override fun rateElement(elementRateWrapper: ElementRateWrapper, isDiskQuery: Boolean): Element {
@@ -90,17 +87,25 @@ class ElementServiceImpl(private val movieRepository: MovieRepository,
         return leaveReviewMovvie(reviewWrapper, newReview)
     }
 
+    override fun getReviewsOfElement(elementTitle: String, isDiskQuery: Boolean): MutableSet<Review> {
+        if(isDiskQuery) {
+            val disk = checkEmptydisk(elementTitle)
+            return disk.reviews
+        }
+        val movie = checkEmptyMovie(elementTitle)
+        return movie.reviews
+    }
 
     override fun addElementToWatchedList(wachtedListWrapper: WachtedListWrapper, isDiskQuery: Boolean): Boolean {
         val user: User = this.userServiceImpl.getByUsername(wachtedListWrapper.username)
         if(isDiskQuery) {
             val disk = checkEmptydisk(wachtedListWrapper.elementTitle)
-            user.addDiskListen(disk)
+            user.addDiskListen(disk.title)
             this.userServiceImpl.save(user)
             return user.isDiskInList(wachtedListWrapper.elementTitle)
         }
         val movie = checkEmptyMovie(wachtedListWrapper.elementTitle)
-        user.addMovieWachted(movie)
+        user.addMovieWachted(movie.title)
         this.userServiceImpl.save(user)
         return user.isMovieInList(wachtedListWrapper.elementTitle)
     }
@@ -152,7 +157,9 @@ class ElementServiceImpl(private val movieRepository: MovieRepository,
     }
 
     override fun addImageToDisk(diskImage: MultipartFile, diskTitle: String): Disk {
-        return this.diskRepository.findById(diskTitle).get()
+        val disk = this.checkEmptydisk(diskTitle)
+        disk.imagen = diskImage.bytes
+        return this.diskRepository.save(disk)
     }
 
     override fun getAllDisks(): List<Disk> = this.diskRepository.findAll()
@@ -161,8 +168,8 @@ class ElementServiceImpl(private val movieRepository: MovieRepository,
         if(username.isEmpty()) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del usuario no puede ser vacio")
         }
-        val listenMinutesList = this.diskRepository.getMinutesListen(username).stream().reduce{elem, sum -> elem + sum }.get()
-        val listenHoursList = this.diskRepository.getHoursListen(username).stream().reduce{elem, sum -> elem + sum }.get()
+        val listenMinutesList = this.diskRepository.getMinutesListen(username).stream().reduce{ elem, sum -> elem + sum }.get()
+        val listenHoursList = this.diskRepository.getHoursListen(username).stream().reduce{ elem, sum -> elem + sum }.get()
         val hours = listenHoursList + (listenMinutesList / 60)
         val gendersListen = this.diskRepository.getGendersOfUser(username)
         return  StatsWrapper(this.diskRepository.getStatsForUser(username), hours, gendersListen)

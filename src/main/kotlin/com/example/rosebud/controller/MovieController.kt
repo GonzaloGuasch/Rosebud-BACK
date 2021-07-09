@@ -32,6 +32,8 @@ class MovieController(private val elementServiceImpl: ElementServiceImpl) {
     @GetMapping("/statsForUser/{username}")
     fun getStatsForUser(@PathVariable username: String) = this.elementServiceImpl.movieStatsForUser(username)
 
+    @GetMapping("/reviewsOf/{movieTitle}")
+    fun getReviewsOfMovie(@PathVariable movieTitle: String) = this.elementServiceImpl.getReviewsOfElement(movieTitle)
     @PostMapping("/rate")
     fun rateMovie(@RequestBody elementRateWrapper: ElementRateWrapper): Element = this.elementServiceImpl.rateElement(elementRateWrapper)
 

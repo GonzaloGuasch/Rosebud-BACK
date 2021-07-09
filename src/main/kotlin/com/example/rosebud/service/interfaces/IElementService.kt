@@ -3,6 +3,7 @@ package com.example.rosebud.service.interfaces
 import com.example.rosebud.model.Disk
 import com.example.rosebud.model.Element
 import com.example.rosebud.model.Movie
+import com.example.rosebud.model.Review
 import com.example.rosebud.model.wrapper.ElementRateWrapper
 import com.example.rosebud.model.wrapper.ReviewWrapper
 import com.example.rosebud.model.wrapper.StatsWrapper
@@ -15,6 +16,7 @@ interface IElementService {
     fun addElementToWatchedList(wachtedListWrapper: WachtedListWrapper, isDiskQuery: Boolean = false): Boolean
     fun getElementByTitle(elementTitle: String, isDiskQuery: Boolean = false): Element?
     fun getElementsMatchWithTitle(title: String, isDiskQuery: Boolean = false): List<Element>?
+    fun getReviewsOfElement(elementTitle: String, isDiskQuery: Boolean = false): MutableSet<Review>
 
     fun saveMovieWithoutPicture(movieToSave: Movie): Movie
     fun addImageToMovie(movieImage: MultipartFile, movieTitle: String)
