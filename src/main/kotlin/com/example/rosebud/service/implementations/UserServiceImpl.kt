@@ -3,6 +3,7 @@ package com.example.rosebud.service.implementations
 import com.example.rosebud.model.Review
 import com.example.rosebud.model.wrapper.Seguidores
 import com.example.rosebud.model.User
+import com.example.rosebud.model.UserDTO
 import com.example.rosebud.model.exception.NoUserException
 import com.example.rosebud.model.wrapper.LoginWrapper
 import com.example.rosebud.model.wrapper.UserInfoProfile
@@ -21,13 +22,14 @@ class UserServiceImpl(private val userRepository: UserRepository,
     override fun getAllUsers(): List<User>? = this.userRepository.findAll()
     override fun save(user: User): User = this.userRepository.save(user)
 
-    override fun login(user: LoginWrapper): User {
+    override fun login(user: LoginWrapper): UserDTO {
         val optinalUser = this.userRepository.findByEmail(user.email)
         if(optinalUser.isEmpty) {
             throw NoUserException("No hay un usuario con ese username")
         }
         if(optinalUser.get().password.equals(user.password)) {
-            return optinalUser.get()
+            val userFromDb = optinalUser.get()
+            return UserDTO(userFromDb.username, userFromDb.email, userFromDb.diskListen, userFromDb.moviesWatched)
         }
         throw NoUserException("No hay un usuario con ese username")
     }

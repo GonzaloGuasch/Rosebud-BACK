@@ -11,13 +11,13 @@ open class User(@Id open val username: String,
                 open var followers: MutableSet<User> = mutableSetOf(),
                 @ManyToMany
                 open var following: MutableSet<User> = mutableSetOf(),
-                @ManyToMany
-                open var moviesWatched: MutableSet<Movie> = mutableSetOf(),
-                @ManyToMany
-                open var diskListen: MutableSet<Disk> = mutableSetOf()) {
+                @ElementCollection
+                open var moviesWatched: MutableSet<String> = mutableSetOf(),
+                @ElementCollection
+                open var diskListen: MutableSet<String> = mutableSetOf()) {
 
 
-    fun addMovieWachted(movieWatched: Movie) {
+    fun addMovieWachted(movieWatched: String) {
         if(this.moviesWatched.contains(movieWatched)) {
             this.moviesWatched.remove(movieWatched)
             return
@@ -25,7 +25,7 @@ open class User(@Id open val username: String,
         this.moviesWatched.add(movieWatched)
     }
 
-    fun addDiskListen(diskListen: Disk) {
+    fun addDiskListen(diskListen: String) {
         if(this.diskListen.contains(diskListen)) {
             this.diskListen.remove(diskListen)
             return
@@ -34,11 +34,11 @@ open class User(@Id open val username: String,
     }
 
     fun isMovieInList(movieTitle: String): Boolean {
-        return this.moviesWatched.any { aMovie -> aMovie.title == movieTitle }
+        return this.moviesWatched.any { aMovieTitle -> aMovieTitle == movieTitle }
     }
 
     fun isDiskInList(diskTitle: String): Boolean {
-        return this.diskListen.any { aDisk -> aDisk.title == diskTitle }
+        return this.diskListen.any { aDiskTitle -> aDiskTitle == diskTitle }
     }
 
     fun isFollowedBy(userFollower: String): Boolean {

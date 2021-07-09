@@ -1,5 +1,6 @@
 package com.example.rosebud.controller
 import com.example.rosebud.model.User
+import com.example.rosebud.model.UserDTO
 import com.example.rosebud.model.wrapper.LoginWrapper
 import com.example.rosebud.service.implementations.UserServiceImpl
 import org.springframework.web.bind.annotation.*
@@ -15,7 +16,7 @@ class UserController(private val userServiceImpl: UserServiceImpl) {
     fun createUser(@RequestBody user: User): User = this.userServiceImpl.save(user)
 
     @PostMapping("/login")
-    fun login(@RequestBody user: LoginWrapper): User = this.userServiceImpl.login(user)
+    fun login(@RequestBody user: LoginWrapper): UserDTO = this.userServiceImpl.login(user)
 
     @GetMapping("/info/{username}")
     fun userInfo(@PathVariable username: String) = this.userServiceImpl.userInfoProfile(username)

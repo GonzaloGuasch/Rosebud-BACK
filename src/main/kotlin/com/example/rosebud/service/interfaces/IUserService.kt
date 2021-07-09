@@ -2,6 +2,7 @@ package com.example.rosebud.service.interfaces
 
 import com.example.rosebud.model.Review
 import com.example.rosebud.model.User
+import com.example.rosebud.model.UserDTO
 import com.example.rosebud.model.wrapper.LoginWrapper
 import com.example.rosebud.model.wrapper.Seguidores
 import com.example.rosebud.model.wrapper.UserInfoProfile
@@ -24,5 +25,5 @@ interface IUserService {
     fun seguidoresDe(username: String): List<Seguidores>
     fun seguidosDe(username: String): List<Seguidores>
     fun userFollowUSer(firstUser: String, secondUser: String): Boolean
-    fun login(user: LoginWrapper): User
+    fun login(user: LoginWrapper): UserDTO
 }
