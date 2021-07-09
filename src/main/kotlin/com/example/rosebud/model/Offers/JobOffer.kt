@@ -9,5 +9,5 @@ class JobOffer(userAuthor: String,
                val remuneration: String,
                val location: String,
                val durationInWeeks: Int,
-               val linkReference: String) : Offer(userAuthor, description, title) {
+               val category: String) : Offer(userAuthor, description, title) {
 }

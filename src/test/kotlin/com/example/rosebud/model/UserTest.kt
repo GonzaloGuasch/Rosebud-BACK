@@ -42,15 +42,15 @@ class UserTest {
 
     @Test
     fun test004_ElUsuarioSabeSiVioLaPeliculaPorSuTitulo() {
-        userOne.addMovieWachted(movieOne)
+        userOne.addMovieWachted(movieOne.title)
 
         Assertions.assertTrue(userOne.isMovieInList("The terminator"))
     }
 
     @Test
     fun test005_SiElUsuarioVuelve() {
-        userOne.addMovieWachted(movieOne)
-        userOne.addMovieWachted(movieOne)
+        userOne.addMovieWachted(movieOne.title)
+        userOne.addMovieWachted(movieOne.title)
 
         Assertions.assertFalse(userOne.isMovieInList("The terminator"))
     }

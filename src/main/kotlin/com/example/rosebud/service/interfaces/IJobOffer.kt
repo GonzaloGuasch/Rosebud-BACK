@@ -5,5 +5,5 @@ import com.example.rosebud.model.Offers.JobOffer
 interface IJobOffer {
     fun getAllJobsOffers(): List<JobOffer>
     fun save(jobOffer: JobOffer) : JobOffer
-    fun applyFilters(locationFilter: String, remuneracionFilter: String): List<JobOffer>
+    fun applyFilters(locationFilter: String, remuneracionFilter: String, categoryFilter: String): List<JobOffer>
 }

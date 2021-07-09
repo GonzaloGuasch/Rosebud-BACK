@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface JobOfferRepository : JpaRepository<JobOffer, Long>{
-
-    fun findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContaining(locationFilter: String, remuneracionFilter: String): List<JobOffer>
+interface JobOfferRepository : JpaRepository<JobOffer, Long> {
+    fun findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContainingAndCategoryIgnoreCaseContaining(locationFilter: String, remuneracionFilter: String, categoryFilter: String): List<JobOffer>
 }

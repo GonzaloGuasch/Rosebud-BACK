@@ -14,6 +14,8 @@ class JobOfferController(private val jobOfferServiceImpl: JobOfferServiceImpl) {
     @PostMapping("/create")
     fun createJobOffer(@RequestBody jobOffer: JobOffer) = this.jobOfferServiceImpl.save(jobOffer)
 
-    @GetMapping("/applyfilter/{locationfilter}/{remuneracionfilter}")
-    fun applyFilter(@PathVariable locationfilter: String,@PathVariable remuneracionfilter: String ) = this.jobOfferServiceImpl.applyFilters(locationfilter, remuneracionfilter)
+    @GetMapping("/applyfilter/{locationfilter}/{remuneracionfilter}/{categoryFilter}")
+    fun applyFilter(@PathVariable locationfilter: String,
+                    @PathVariable remuneracionfilter: String,
+                    @PathVariable categoryFilter: String) = this.jobOfferServiceImpl.applyFilters(locationfilter, remuneracionfilter, categoryFilter)
 }

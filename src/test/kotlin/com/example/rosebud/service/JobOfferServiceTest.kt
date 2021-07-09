@@ -23,8 +23,8 @@ class JobOfferServiceTest {
     fun setUp() {
         Mockito.`when`(jobOfferRepository.save(jobOffer)).thenReturn(jobOffer)
         Mockito.`when`(jobOfferRepository.findAll()).thenReturn(listOf(jobOffer))
-        Mockito.`when`(jobOfferRepository.findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContaining(NO_LOCATION, NO_REMUNERATION)).thenReturn(listOf())
-        Mockito.`when`(jobOfferRepository.findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContaining(LOCATION, NO_REMUNERATION)).thenReturn(listOf(jobOffer))
+        Mockito.`when`(jobOfferRepository.findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContainingAndCategoryIgnoreCaseContaining(NO_LOCATION, NO_REMUNERATION, "")).thenReturn(listOf())
+        Mockito.`when`(jobOfferRepository.findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContainingAndCategoryIgnoreCaseContaining(LOCATION, NO_REMUNERATION, "")).thenReturn(listOf(jobOffer))
     }
 
 
@@ -44,14 +44,14 @@ class JobOfferServiceTest {
 
     @Test
     fun test003_CuandoLosFiltrosAplicadosNoAplicanANingunaOfertaEnLaBaseSeDevuelveUnaListaVacia() {
-        val emptyJobList = this.jobOfferService.applyFilters(NO_LOCATION, NO_REMUNERATION)
+        val emptyJobList = this.jobOfferService.applyFilters(NO_LOCATION, NO_REMUNERATION, "")
 
         Assertions.assertTrue(emptyJobList.isEmpty())
     }
 
     @Test
     fun test004_SiLosFiltrosAplicanRetornanLaLista() {
-        val jobListWithFIlter = this.jobOfferService.applyFilters(LOCATION, NO_REMUNERATION)
+        val jobListWithFIlter = this.jobOfferService.applyFilters(LOCATION, NO_REMUNERATION, "")
 
         Assertions.assertFalse(jobListWithFIlter.isEmpty())
 

@@ -10,6 +10,6 @@ class JobOfferServiceImpl(private val jobOfferRepository : JobOfferRepository): 
 
     override fun getAllJobsOffers() = this.jobOfferRepository.findAll()
     override fun save(jobOffer: JobOffer) = this.jobOfferRepository.save(jobOffer)
-    override fun applyFilters(locationFilter: String, remuneracionFilter: String) = this.jobOfferRepository.findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContaining(locationFilter, remuneracionFilter)
+    override fun applyFilters(locationFilter: String, remuneracionFilter: String, categoryFilter: String) = this.jobOfferRepository.findByLocationIgnoreCaseContainingAndRemunerationIgnoreCaseContainingAndCategoryIgnoreCaseContaining(locationFilter, remuneracionFilter, categoryFilter)
 
 }
